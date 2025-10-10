@@ -1,8 +1,12 @@
 
+# broadcast 0.1.5.3
 
-# broadcast 0.1.5.1
+* Replaced `abs` function with `labs` function when using long integers in src/rcpp_bcFact_int.
 
-* Reduced compiled size of rcpp_bc_b; this should fix the CRAN Error on `r-devel-linux-x86_64-fedora-clang`.
+
+# broadcast 0.1.5.2
+
+* Reduced the installation time and size of the compiled library, with almost no performance loss.
 
 
 # broadcast 0.1.5
@@ -56,7 +60,7 @@ Moreover, the S3 methods in this package now check for unknown arguments given t
 
 # broadcast 0.1.1
 * Continuation of Initial CRAN submission.
-* Replaced abs function with labs function when using long integers in src/rcpp_bc_int.
+* Replaced `abs` function with `labs` function when using long integers in src/rcpp_bc_int.
 
 
 # broadcast 0.1

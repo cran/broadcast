@@ -12,6 +12,14 @@
 
 #' @keywords internal
 #' @noRd
+.chunkify_dims <- function(dims) {
+  chunks <- c(2L, 4L, 8L, 16L)
+  return(.C_chunkify_dims(dims, chunks))
+}
+
+
+#' @keywords internal
+#' @noRd
 .transform_function <- function(f) {
   
   # this function is used for `bcapply()`

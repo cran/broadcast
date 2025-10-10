@@ -104,3 +104,28 @@
   .Call("C_sd_lc", w, diag(vc), vc, as.integer(nobs), as.integer(nvars), as.double(bad_rp))
 }
 
+#' @keywords Internal
+#' @noRd
+.C_bindhelper_vdims <- function(x) {
+  .Call("C_bindhelper_vdims", x)
+}
+
+#' @keywords Internal
+#' @noRd
+.C_bindhelper_sum_along <- function(lst_dims, along) {
+  .Call("C_bindhelper_sum_along", lst_dims, as.integer(along))
+}
+
+#' @keywords Internal
+#' @noRd
+.C_bindhelper_max_type <- function(x) {
+  .Call("C_bindhelper_max_type", x)
+}
+
+
+#' @keywords Internal
+#' @noRd
+.C_chunkify_dims <- function(dims, chunks) {
+  .Call("C_chunkify_dims", as.integer(dims), as.integer(chunks))
+}
+
