@@ -1,12 +1,13 @@
 Package: broadcast
 Title: Broadcasted Array Operations Like 'NumPy'
-Version: 0.1.5.3
+Version: 0.1.6.1
 Authors@R: person("Tony", "Wilkes", role = c("aut", "cre", "cph"),
                   email = "tony_a_wilkes@outlook.com",
                   comment = c(ORCID = "0000-0001-9498-8379"))
 Description: Implements efficient 'NumPy'-like broadcasted operations for atomic and recursive arrays.
     In the context of operations involving 2 (or more) arrays,
-    “broadcasting” refers to efficiently recycling array dimensions without allocating additional memory.
+    “broadcasting” refers to efficiently recycling array dimensions,
+    without making copies.
 		Besides linking to 'Rcpp',
 		'broadcast' does not use any external libraries in any way;
 		'broadcast' was essentially made from scratch and can be installed out-of-the-box.
@@ -34,9 +35,9 @@ URL: https://github.com/tony-aw/broadcast,
 BugReports: https://github.com/tony-aw/broadcast/issues/
 Language: en-gb
 NeedsCompilation: yes
-Packaged: 2025-10-09 17:06:31 UTC; Tony
+Packaged: 2025-11-09 18:51:27 UTC; Tony
 Author: Tony Wilkes [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-9498-8379>)
 Maintainer: Tony Wilkes <tony_a_wilkes@outlook.com>
 Repository: CRAN
-Date/Publication: 2025-10-10 10:30:02 UTC
+Date/Publication: 2025-11-09 19:30:02 UTC

@@ -1,8 +1,8 @@
 #' Broadcasted Ifelse
 #'
 #' @description
-#' The `bc_ifelse()` function
-#' performs a broadcasted form of `ifelse()`. \cr
+#' The `bc_ifelse()` method
+#' performs a broadcasted form of \link[base]{ifelse}. \cr
 #' 
 #' @param test a vector or array,
 #' with the type `logical`, `integer`, or `raw`,
@@ -108,7 +108,11 @@ setMethod(
     RxC <- x.dim[1L] != 1L # check if `x` is a column-vector (and thus y is a row-vector)
     out <- .rcpp_bc_ifelse_ov(test, x, y, RxC, out.dimsimp, out.len)
   }
-  else if(dimmode == 3L) { # general mode
+  else if(dimmode == 3L) {
+    bigx <- .C_dims_allge(x.dim, y.dim)
+    out <- .rcpp_bc_ifelse_bv(test, x, y, bigx, out.dimsimp, out.len)
+  }
+  else if(dimmode == 4L) { # general mode
     
     by_x <- .C_make_by(x.dim)
     by_y <- .C_make_by(y.dim)
@@ -121,14 +125,14 @@ setMethod(
     )
   }
   
-  dim(out) <- out.dimorig
+  .rcpp_set_attr(out, "dim", out.dimorig)
   
   if(ndim(test) <= 1L && ndim(out) <= 1L) {
-    names(out) <- names(test)
+    .rcpp_set_attr(out, "names", names(test))
   }
   else if(is.array(test) && is.array(out)) {
     if(all(dim(test) == out.dimorig)) {
-      dimnames(out) <- dimnames(test)
+      .set_dimnames(out, dimnames(test))
     }
   }
   

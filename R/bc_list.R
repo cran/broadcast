@@ -45,13 +45,11 @@ setMethod(
 #' @keywords internal
 #' @noRd
 .bc.list <- function(x, y, f, abortcall) {
+  
   # checks:
   .binary_stop_general(x, y, "", abortcall)
   if(!is.list(x) || !is.list(y)) {
     stop(simpleError("`x` and `y` must be recursive arrays", abortcall))
-  }
-  if(length(x) == 0L || length(y) == 0L) {
-    return(vector("list", 0L))
   }
   if(!is.function(f)) {
     stop(simpleError("`f` must be a function", abortcall))
@@ -60,6 +58,9 @@ setMethod(
     stop(simpleError("`f` must be a function that takes in exactly 2 arguments", abortcall))
   }
   
+  if(length(x) == 0L || length(y) == 0L) {
+    return(vector("list", 0L))
+  }
   
   # general prep:
   prep <- .binary_prep(x, y, abortcall)
@@ -77,7 +78,11 @@ setMethod(
     RxC <- x.dim[1L] != 1L # check if `x` is a column-vector (and thus y is a row-vector)
     out <- .rcpp_bc_list_ov(x, y, RxC, out.dimsimp, out.len, f)
   }
-  else if(dimmode == 3L) { # general mode
+  else if(dimmode == 3L) {
+    bigx <- .C_dims_allge(x.dim, y.dim)
+    out <- .rcpp_bc_list_bv(x, y, bigx, out.dimsimp, out.len, f)
+  }
+  else if(dimmode == 4L) { # general mode
     
     by_x <- .C_make_by(x.dim)
     by_y <- .C_make_by(y.dim)
@@ -90,7 +95,7 @@ setMethod(
     )
   }
   
-  dim(out) <- out.dimorig
+  .rcpp_set_attr(out, "dim", out.dimorig)
   
   .binary_set_attr(out, x, y)
   

@@ -35,11 +35,11 @@ cast_dim2hier <- function(x, ...) {
 
 #' @rdname cast_dim2hier
 #' @export
-cast_dim2hier.default <- function(x, in2out = TRUE, distr.names = FALSE, ...) {
+cast_dim2hier.default <- function(x, in2out = TRUE, distr.names = TRUE, ...) {
   
   # checks:
   .ellipsis(list(...), sys.call())
-  if(!is.list(x)) {
+  if(!.is_list(x)) {
     stop("`x` must be a list")
   }
   if(!isTRUE(in2out) && !isFALSE(in2out)) {
@@ -70,7 +70,7 @@ cast_dim2hier.default <- function(x, in2out = TRUE, distr.names = FALSE, ...) {
   .rcpp_rec_dim2hier(x, out, x.dcp, 0, 1.0, depth)
   
   x.dimnames <- dimnames(x)
-  check_name <- is.list(x.dimnames) &&
+  check_name <- .is_list(x.dimnames) &&
     .C_any_nonNULL(x.dimnames) &&
     distr.names
   

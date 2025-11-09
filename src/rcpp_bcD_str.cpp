@@ -7,6 +7,8 @@ using namespace Rcpp;
 
 
 
+
+
 inline int rcpp_str_dist_led(String x, String y) {
   
   if(x == NA_STRING || y == NA_STRING) {
@@ -17,10 +19,10 @@ inline int rcpp_str_dist_led(String x, String y) {
   std::string s2 = y;
   
   // Number of elements
-  const int n = s1.size();
-  const int m = s2.size();
-  const int nrow = n + 1;
-  const int ncol = m + 1;
+  int n = s1.size();
+  int m = s2.size();
+  int nrow = n + 1;
+  int ncol = m + 1;
   std::vector<int> d(nrow * ncol, 0);
 
   if (n == 0){
@@ -69,11 +71,10 @@ inline int rcpp_str_dist_led(String x, String y) {
 
 
 
-
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcDist_str_v)]]
-SEXP rcpp_bcDist_str_v(
+// [[Rcpp::export(.rcpp_bcD_str_v, rng = false)]]
+SEXP rcpp_bcD_str_v(
   SEXP x, SEXP y, 
   R_xlen_t nout, int op
 ) {
@@ -99,8 +100,8 @@ return out;
 
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcDist_str_ov)]]
-SEXP rcpp_bcDist_str_ov(
+// [[Rcpp::export(.rcpp_bcD_str_ov, rng = false)]]
+SEXP rcpp_bcD_str_ov(
   SEXP x, SEXP y,  bool RxC, SEXP out_dim,
   R_xlen_t nout, int op
 ) {
@@ -125,8 +126,34 @@ return out;
 
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcDist_str_d)]]
-SEXP rcpp_bcDist_str_d(
+// [[Rcpp::export(.rcpp_bcD_str_bv, rng = false)]]
+SEXP rcpp_bcD_str_bv(
+  SEXP x, SEXP y,  bool bigx, SEXP out_dim,
+  R_xlen_t nout, int op
+) {
+
+
+const SEXP *px = STRING_PTR_RO(x);
+const SEXP *py = STRING_PTR_RO(y);
+
+SEXP out = PROTECT(Rf_allocVector(INTSXP, nout));
+int *pout;
+pout = INTEGER(out);
+
+MACRO_OP_STR_DIST(MACRO_DIM_BIG2VECTOR);
+
+UNPROTECT(1);
+return out;
+
+}
+
+
+
+
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.rcpp_bcD_str_d, rng = false)]]
+SEXP rcpp_bcD_str_d(
   SEXP x, SEXP y, 
   SEXP by_x,
   SEXP by_y,

@@ -2,7 +2,6 @@
 #'
 #' @description
 #' The `acast()` function spreads subsets of an array margin over a new dimension. \cr
-#' Written in 'C' and 'C++' for high speed and memory efficiency. \cr
 #' \cr
 #' Roughly speaking, `acast()` can be thought of as the "array" analogy to
 #' \code{data.table::dcast()}. \cr
@@ -27,13 +26,15 @@
 #' If `fill = TRUE`, an unbalanced `grp` factor is allowed,
 #' and missing values will be filled with `fill_val`. \cr
 #' If `fill = FALSE` (default), an unbalanced `grp` factor is not allowed,
-#' and providing an unbalanced factor for `grp` produces an error. \cr
-#' When `x` has type of `raw`, unbalanced `grp` is never allowed.
+#' and providing an unbalanced factor for `grp` produces an error.
 #' @param fill_val scalar of the same type of `x`,
 #' giving value to use to fill in the gaps when `fill = TRUE`. \cr
-#' The `fill_val` argument is ignored when `fill = FALSE`
-#' or when `x` has type of `raw`.
-#' @param ... further arguments passed to or from methods. \cr \cr
+#' The `fill_val` argument is ignored when `fill = FALSE`. \cr
+#' If `fill_val` is missing, it is specified as follows: \cr
+#'  - If `x` is of type `raw` and `fill = TRUE`, `fill_val` is not allowed to be missing, and an error is returned;
+#'  - If `x` is atomic but not `raw`, `fill_val` is set to `NA`;
+#'  - If `x` is of type `list`, `fill_val` is set to `list(NULL)`. \cr \cr
+#' @param ... further arguments passed to or from methods.
 #' 
 #' 
 #' @details
@@ -53,12 +54,7 @@
 #' 
 #' 
 #' @returns
-#' An array with the following properties:
-#'  
-#'  - the number of dimensions of the output array is equal to `ndim(x) + 1`;
-#'  - the dimensions of the output array is equal to `c(dim(x), max(tabulate(grp))`;
-#'  - the `dimnames` of the output array is equal to `c(dimnames(x), list(levels(grp)))`. \cr \cr
-#' 
+#' An array with dimensions `c(dim(x), max(tabulate(grp))`. \cr \cr
 #' 
 #' @section Back transformation: 
 #' 
@@ -88,11 +84,27 @@ acast <- function(x, ...) {
 #' @rdname acast
 #' @export
 acast.default <- function(
-    x, margin, grp, fill = FALSE, fill_val = if(is.atomic(x)) NA else list(NULL), ...
+    x, margin, grp, fill = FALSE,
+    fill_val,
+    ...
 ) {
   
   # first checks:
+  if(!is.array(x)) {
+    stop("`x` must be an array")
+  }
   .ellipsis(list(...), sys.call())
+  if(missing(fill_val)) {
+    if(is.raw(x) && isTRUE(fill)) {
+      stop("if `x` is of type raw and `fill = TRUE`, `fill_val` must be specified explicitly")
+    }
+    else if(is.atomic(x)) {
+      fill_val <- NA
+    }
+    else if(is.list(x)) {
+      fill_val <- list(NULL)
+    }
+  }
   if(is.null(fill_val)) fill_val <- list(NULL)
   .acast_stop_margin(margin, x, sys.call())
   margin <- as.integer(margin)
@@ -139,6 +151,7 @@ acast.default <- function(
   .acast_stop_out(out.dim, sys.call())
   
   out <- array(fillvalue, out.dim)
+  .acast_set_dimnames(out, x, margin, grp_lvls)
   
   
   # pre params:
@@ -152,12 +165,6 @@ acast.default <- function(
   # CORE function:
   .rcpp_acast(out, x, starts, lens, subs, out.dimchunk, dcp_out, dcp_x, grp, grp_n, margin, newdim)
   
-  
-  # make dimnames:
-  out.dimnames <- rep(list(NULL), out.ndim)
-  out.dimnames[1:x.ndim] <- dimnames(x)
-  out.dimnames[x.ndim+1L] <- list(grp_lvls) # safe, because I used droplevels()
-  dimnames(out) <- out.dimnames
   
   return(out)
   

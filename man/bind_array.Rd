@@ -19,7 +19,9 @@ If argument \code{input} has length \code{0},
 or it contains exclusively objects where one or more dimensions are \code{0},
 an error is returned. \cr
 If \code{input} has length \code{1}, \code{bind_array()} simply returns \code{input[[1L]]}. \cr
-\code{input} may not contain more than \code{2^16} objects.}
+\code{input} may not contain more than \code{2^16} objects. \cr
+If the user wishes to include vectors to bind in \code{input},
+the vectors must be turned into arrays; for example using \link{vector2array}.}
 
 \item{along}{a single integer,
 indicating the dimension along which to bind the dimensions. \cr
@@ -48,13 +50,20 @@ If \code{NULL}, no communal names will be given. \cr
 For example: \cr
 When binding columns of matrices, the matrices will share the same rownames. \cr
 Using \code{comnames_from = 10} will then result in \code{bind_array()} using
-\code{rownames(input[[10]])} for the rownames of the output. \cr \cr}
+\code{rownames(input[[10]])} for the rownames of the output.}
 }
 \value{
-An array. \cr  \cr
+An array as a result from the (broadcasted) binding. \cr
+\cr
+The type of the result is determined from the highest type of any of the inputs. \cr
+The hierarchy of types is: \cr
+raw < logical < integer < double < complex < character < list . \cr
+\cr
+If one of the input arrays is a \link{broadcaster}, the result will also be a \link{broadcaster}. \cr
+\cr
 }
 \description{
-\code{bind_array()} binds (atomic/recursive) arrays and (atomic/recursive) matrices. \cr
+\code{bind_array()} binds (atomic/recursive) arrays along a dimension. \cr
 Allows for broadcasting. \cr \cr
 }
 \details{
@@ -74,7 +83,7 @@ in that it can handle recursive arrays properly \cr
 ruining the structure).
 \item unlike \code{abind::abind},
 \code{bind_array()} only binds (atomic/recursive) arrays and matrices. \cr
-\code{bind_array()}does not attempt to convert things to arrays when they are not arrays,
+\code{bind_array()} does not attempt to convert things to arrays when they are not arrays,
 but will give an error instead. \cr
 This saves computation time and prevents unexpected results.
 \item \code{bind_array()} has more streamlined naming options,
@@ -94,7 +103,7 @@ bind_array(input, 2L)
 
 # Broadcasting example ====
 x <- array(1:20, c(5, 4))
-y <- array(-1:-5, c(5, 1))
+y <- array(-1:-5, c(1, 5)) # rows will be broadcasted from 1 to 5
 z <- array(21:40, c(5, 4))
 input <- list(x, y, z)
 bind_array(input, 2L)
@@ -162,6 +171,12 @@ input <- list(x, y, z)
 names(input) <- c("", NA, "")
 bind_array(input, 2L)
 
+
+# binding vectors and arrays ====
+x <- setNames(1:4, letters[1:4]) |> vector2array(direction = 2L, ndim = 2L)
+y <- array(1:20, c(5, 4), list(NULL, LETTERS[1:4]))
+input <- list(x, y)
+bind_array(input, 1L, comnames_from = 1L) # row-bind, with names from vector `x`
 
 }
 \references{

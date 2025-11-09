@@ -14,7 +14,7 @@ lst.ndim(x)
 }
 \value{
 For \code{ndim()}: an integer scalar. \cr
-For \code{lst.ndim()}: an integer vector, with the same length, names and dimensions as \code{x}. \cr
+For \code{lst.ndim()}: an integer vector, with the same length, names and dimensions as \code{x}. \cr \cr
 }
 \description{
 \code{ndim()} returns the number of dimensions of an object. \cr

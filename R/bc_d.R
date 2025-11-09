@@ -86,8 +86,10 @@ setMethod(
     return(numeric(0L))
   }
   
-  if(!is.double(x)) x <- as_dbl(x)
-  if(!is.double(y)) y <- as_dbl(y)
+  if(is.double(x) || is.double(y)) {
+    if(!is.double(x)) x <- as_dbl(x)
+    if(!is.double(y)) y <- as_dbl(y)
+  }
   
   prep <- .binary_prep(x, y, abortcall)
   x.dim <- prep[[1L]]
@@ -104,7 +106,11 @@ setMethod(
     RxC <- x.dim[1L] != 1L # check if `x` is a column-vector (and thus y is a row-vector)
     out <- .rcpp_bc_dec_ov(x, y, RxC, out.dimsimp, out.len, op)
   }
-  else if(dimmode == 3L) { # general mode
+  else if(dimmode == 3L) {
+    bigx <- .C_dims_allge(x.dim, y.dim)
+    out <- .rcpp_bc_dec_bv(x, y, bigx, out.dimsimp, out.len, op)
+  }
+  else if(dimmode == 4L) { # general mode
     
     by_x <- .C_make_by(x.dim)
     by_y <- .C_make_by(y.dim)
@@ -117,7 +123,7 @@ setMethod(
     )
   }
   
-  dim(out) <- out.dimorig
+  .rcpp_set_attr(out, "dim", out.dimorig)
   
   .binary_set_attr(out, x, y)
   
@@ -136,8 +142,10 @@ setMethod(
     return(logical(0L))
   }
   
-  if(!is.double(x)) x <- as_dbl(x)
-  if(!is.double(y)) y <- as_dbl(y)
+  if(is.double(x) || is.double(y)) {
+    if(!is.double(x)) x <- as_dbl(x)
+    if(!is.double(y)) y <- as_dbl(y)
+  }
   
   prep <- .binary_prep(x, y, abortcall)
   x.dim <- prep[[1L]]
@@ -157,7 +165,11 @@ setMethod(
     RxC <- x.dim[1L] != 1L # check if `x` is a column-vector (and thus y is a row-vector)
     out <- .rcpp_bcRel_dec_ov(x, y, RxC, out.dimsimp, out.len, op)
   }
-  else if(dimmode == 3L) { # general mode
+  else if(dimmode == 3L) {
+    bigx <- .C_dims_allge(x.dim, y.dim)
+    out <- .rcpp_bcRel_dec_bv(x, y, bigx, out.dimsimp, out.len, op)
+  }
+  else if(dimmode == 4L) { # general mode
     
     by_x <- .C_make_by(x.dim)
     by_y <- .C_make_by(y.dim)
@@ -170,7 +182,7 @@ setMethod(
     )
   }
   
-  dim(out) <- out.dimorig
+  .rcpp_set_attr(out, "dim", out.dimorig)
   
   .binary_set_attr(out, x, y)
   
@@ -198,8 +210,11 @@ setMethod(
     return(logical(0L))
   }
   
-  if(!is.double(x)) x <- as_dbl(x)
-  if(!is.double(y)) y <- as_dbl(y)
+  if(is.double(x) || is.double(y)) {
+    if(!is.double(x)) x <- as_dbl(x)
+    if(!is.double(y)) y <- as_dbl(y)
+  }
+  
   
   prep <- .binary_prep(x, y, abortcall)
   x.dim <- prep[[1L]]
@@ -213,26 +228,30 @@ setMethod(
   
   
   if(dimmode == 1L) { # vector mode
-    out <- .rcpp_bcDist_dec_v(x, y, out.len, op, prec)
+    out <- .rcpp_bcD_dec_v(x, y, out.len, op, prec)
   }
   else if(dimmode == 2L) { # orthogonal vector mode
     RxC <- x.dim[1L] != 1L # check if `x` is a column-vector (and thus y is a row-vector)
-    out <- .rcpp_bcDist_dec_ov(x, y, RxC, out.dimsimp, out.len, op, prec)
+    out <- .rcpp_bcD_dec_ov(x, y, RxC, out.dimsimp, out.len, op, prec)
   }
-  else if(dimmode == 3L) { # general mode
+  else if(dimmode == 3L) {
+    bigx <- .C_dims_allge(x.dim, y.dim)
+    out <- .rcpp_bcD_dec_bv(x, y, bigx, out.dimsimp, out.len, op, prec)
+  }
+  else if(dimmode == 4L) { # general mode
     
     by_x <- .C_make_by(x.dim)
     by_y <- .C_make_by(y.dim)
     dcp_x <- .C_make_dcp(x.dim)
     dcp_y <- .C_make_dcp(y.dim)
     
-    out <- .rcpp_bcDist_dec_d(
+    out <- .rcpp_bcD_dec_d(
       x, y, by_x, by_y,
       dcp_x, dcp_y, as.integer(out.dimsimp), out.len, op, prec
     )
   }
   
-  dim(out) <- out.dimorig
+  .rcpp_set_attr(out, "dim", out.dimorig)
   
   .binary_set_attr(out, x, y)
   

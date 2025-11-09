@@ -13,7 +13,7 @@
 #' @keywords internal
 #' @noRd
 .chunkify_dims <- function(dims) {
-  chunks <- c(2L, 4L, 8L, 16L)
+  chunks <- c(4L, 16L)
   return(.C_chunkify_dims(dims, chunks))
 }
 
@@ -81,5 +81,11 @@
 .ellipsis <- function(ellipsis, abortcall) {
   if(length(ellipsis)) {
     stop(simpleError("unkown arguments given", call = abortcall))
+  }
+}
+
+.set_dimnames <- function(x, newdimnames) {
+  if(.rcpp_dimnames_fit(x, newdimnames)) {
+    .rcpp_set_attr(x, "dimnames", newdimnames)
   }
 }

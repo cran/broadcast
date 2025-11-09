@@ -1,4 +1,24 @@
 
+# broadcast 0.1.6.1
+
+* Replaced all uses of `abs()`/`fabs()` with `std::abs()` in the internal source code.
+
+
+# broadcast 0.1.6
+
+* **Bug fix:** There was a bug in `acast()`, where it would, under certain circumstances, incorrectly specify `dimnames` to the output, leading to an error. This is now fixed.
+* Small speed improvement for nearly all operations.
+* The `acast()` method now allows unequal groups even when `x` is of type `raw`.
+* Added the `cast_shallow2atomic()` casting method.
+* The `cast_hier2dim()` method can now set `dimnames` automatically by specifying the new `direction.names` argument.
+* Added the `bc_strrep()` method.
+* Added the `vector2array()` and `undim()` helper functions.
+* Added `bcr` as short-hand for `broadcaster`.
+* Added `mbroadcasters()`.
+* If one of the input arrays in `bind_array()` is a `broadcaster`, then the result will also be a `broadcaster`.
+* Added more tests.
+
+
 # broadcast 0.1.5.3
 
 * Replaced `abs` function with `labs` function when using long integers in src/rcpp_bcFact_int.

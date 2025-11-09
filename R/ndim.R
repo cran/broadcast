@@ -9,7 +9,7 @@
 #'
 #' @returns
 #' For `ndim()`: an integer scalar. \cr
-#' For `lst.ndim()`: an integer vector, with the same length, names and dimensions as `x`. \cr
+#' For `lst.ndim()`: an integer vector, with the same length, names and dimensions as `x`. \cr \cr
 #'
 #'
 #' @example inst/examples/ndim.R

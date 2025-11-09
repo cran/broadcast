@@ -57,8 +57,8 @@ inline double rcpp_int53_mod(double x, double y, double intmin, double intmax) {
   if(MACRO_OVERFLOW(x)) {
     return R_NaN;
   }
-  if(MACRO_OVERFLOW(y) && fabs(x) <= fabs(y)) {
-    double out1 = (fabs(x) == fabs(y)) ? 0 :
+  if(MACRO_OVERFLOW(y) && std::abs(x) <= std::abs(y)) {
+    double out1 = (std::abs(x) == std::abs(y)) ? 0 :
 	    ((x < 0 && y > 0) ||
 	     (y < 0 && x > 0))
 	     ? x+y  // differing signs
@@ -81,7 +81,7 @@ inline double rcpp_int53_idiv(double x, double y, double intmin, double intmax) 
       return q;
     }
     
-    if(fabs(q) < 1) {
+    if(std::abs(q) < 1) {
       double z = (q < 0) ? -1
 	    : ((x < 0 && y > 0) ||
 	       (x > 0 && y < 0) // differing signs
@@ -98,8 +98,8 @@ inline double rcpp_int53_idiv(double x, double y, double intmin, double intmax) 
 
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcFact_int_v)]]
-SEXP rcpp_bcFact_int_v(
+// [[Rcpp::export(.rcpp_bcD_int_v, rng = false)]]
+SEXP rcpp_bcD_int_v(
   SEXP x, SEXP y,
   R_xlen_t nout, int op
 ) {
@@ -122,8 +122,8 @@ return out;
 
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcFact_int_ov)]]
-SEXP rcpp_bcFact_int_ov(
+// [[Rcpp::export(.rcpp_bcD_int_ov, rng = false)]]
+SEXP rcpp_bcD_int_ov(
   SEXP x, SEXP y, bool RxC, SEXP out_dim,
   R_xlen_t nout, int op
 ) {
@@ -146,8 +146,32 @@ return out;
 
 //' @keywords internal
 //' @noRd
-// [[Rcpp::export(.rcpp_bcFact_int_d)]]
-SEXP rcpp_bcFact_int_d(
+// [[Rcpp::export(.rcpp_bcD_int_bv, rng = false)]]
+SEXP rcpp_bcD_int_bv(
+  SEXP x, SEXP y, bool bigx, SEXP out_dim,
+  R_xlen_t nout, int op
+) {
+
+double tempout;
+
+SEXP out = PROTECT(Rf_allocVector(REALSXP, nout));
+double *pout;
+pout = REAL(out);
+
+MACRO_OP_INT_FACT(MACRO_DIM_BIG2VECTOR);
+
+UNPROTECT(1);
+return out;
+
+}
+
+
+
+
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.rcpp_bcD_int_d, rng = false)]]
+SEXP rcpp_bcD_int_d(
   SEXP x, SEXP y,
   SEXP by_x,
   SEXP by_y,

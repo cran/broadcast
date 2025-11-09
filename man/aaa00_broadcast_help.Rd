@@ -12,7 +12,7 @@ Broadcasted Array Operations Like 'NumPy' \cr \cr
 
 Implements efficient 'NumPy'-like broadcasted operations for atomic and recursive arrays.
 
-In the context of operations involving 2 (or more) arrays, “broadcasting” refers to efficiently recycling array dimensions without allocating additional memory.
+In the context of operations involving 2 (or more) arrays, “broadcasting” refers to efficiently recycling array dimensions, without making copies.
 
 Besides linking to 'Rcpp', 'broadcast' does not use any external libraries in any way;
 'broadcast' was essentially made from scratch and can be installed out-of-the-box.
@@ -77,10 +77,11 @@ More information about the casting functions can be found here: \cr
 \cr
 
 \bold{General Pairwise Broadcasted Functions} \cr
-'broadcast' also comes with 2 general pairwise broadcasted functions:
+'broadcast' also comes with a few general pairwise broadcasted functions:
 \itemize{
 \item \link{bc_ifelse}: Broadcasted version of \link[base]{ifelse}.
-\item \link{bcapply}: Broadcasted apply-like function. \cr \cr
+\item \link{bcapply}: Broadcasted apply-like function.
+\item \link{bc_strrep}: Broadcasted version of \link[base]{strrep}. \cr \cr
 }
 
 \bold{Other functions} \cr
@@ -92,7 +93,7 @@ which preserve names and dimensions - convenient for arrays. \cr
 \link[=sd_lc]{simple linear algebra functions for statistics}. \cr
 \cr
 And 'broadcast' comes with some helper functions: \cr
-\link{bc_dim}, \link{ndim}, \link{lst.ndim}, \link{rep_dim}. \cr \cr
+\link{bc_dim}, \link{ndim}, \link{lst.ndim}, \link{rep_dim}, \link{vector2array}. \cr \cr
 }
 
 \section{Supported Structures}{

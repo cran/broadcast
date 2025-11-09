@@ -10,7 +10,7 @@ bind_array(input, 2L)
 
 # Broadcasting example ====
 x <- array(1:20, c(5, 4))
-y <- array(-1:-5, c(5, 1))
+y <- array(-1:-5, c(1, 5)) # rows will be broadcasted from 1 to 5
 z <- array(21:40, c(5, 4))
 input <- list(x, y, z)
 bind_array(input, 2L)
@@ -78,4 +78,10 @@ input <- list(x, y, z)
 names(input) <- c("", NA, "")
 bind_array(input, 2L)
 
+
+# binding vectors and arrays ====
+x <- setNames(1:4, letters[1:4]) |> vector2array(direction = 2L, ndim = 2L)
+y <- array(1:20, c(5, 4), list(NULL, LETTERS[1:4]))
+input <- list(x, y)
+bind_array(input, 1L, comnames_from = 1L) # row-bind, with names from vector `x`
 

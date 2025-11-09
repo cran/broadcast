@@ -25,13 +25,13 @@ if ( requireNamespace("tinytest", quietly = TRUE) ){
     "broadcast", testdir = file.path("tinytest", "bc_num")
   )
   tinytest::test_package(
-    "broadcast", testdir = file.path("tinytest", "binary_names")
-  )
-  tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "bc_rel_attr")
   )
   tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "bc_str")
+  )
+  tinytest::test_package(
+    "broadcast", testdir = file.path("tinytest", "binary_names")
   )
   tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "bind_array_1_basic")
@@ -58,6 +58,9 @@ if ( requireNamespace("tinytest", quietly = TRUE) ){
     "broadcast", testdir = file.path("tinytest", "class")
   )
   tinytest::test_package(
+    "broadcast", testdir = file.path("tinytest", "helper")
+  )
+  tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "internal")
   )
   tinytest::test_package(
@@ -65,6 +68,9 @@ if ( requireNamespace("tinytest", quietly = TRUE) ){
   )
   tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "overload")
+  )
+  tinytest::test_package(
+    "broadcast", testdir = file.path("tinytest", "shallow2atomic")
   )
   tinytest::test_package(
     "broadcast", testdir = file.path("tinytest", "typecast")

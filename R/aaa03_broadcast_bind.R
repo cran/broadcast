@@ -1,7 +1,7 @@
 #' Dimensional Binding of Arrays with Broadcasting
 #'
 #' @description
-#' `bind_array()` binds (atomic/recursive) arrays and (atomic/recursive) matrices. \cr
+#' `bind_array()` binds (atomic/recursive) arrays along a dimension. \cr
 #' Allows for broadcasting. \cr \cr
 #' 
 #' 
@@ -10,7 +10,9 @@
 #' or it contains exclusively objects where one or more dimensions are `0`,
 #' an error is returned. \cr
 #' If `input` has length `1`, `bind_array()` simply returns `input[[1L]]`. \cr
-#' `input` may not contain more than `2^16` objects.
+#' `input` may not contain more than `2^16` objects. \cr
+#' If the user wishes to include vectors to bind in `input`,
+#' the vectors must be turned into arrays; for example using \link{vector2array}.
 #' @param along a single integer,
 #' indicating the dimension along which to bind the dimensions. \cr
 #' I.e. use `along = 1` for row-binding, `along = 2` for column-binding, etc. \cr
@@ -34,7 +36,8 @@
 #' For example: \cr
 #' When binding columns of matrices, the matrices will share the same rownames. \cr
 #' Using `comnames_from = 10` will then result in `bind_array()` using
-#' `rownames(input[[10]])` for the rownames of the output. \cr \cr
+#' `rownames(input[[10]])` for the rownames of the output.
+#' 
 #' 
 #' @details
 #' The API of `bind_array()` is inspired by the fantastic
@@ -53,7 +56,7 @@
 #'  ruining the structure).
 #'  - unlike \code{abind::abind},
 #'  `bind_array()` only binds (atomic/recursive) arrays and matrices. \cr
-#'  `bind_array()`does not attempt to convert things to arrays when they are not arrays,
+#'  `bind_array()` does not attempt to convert things to arrays when they are not arrays,
 #'  but will give an error instead. \cr
 #'  This saves computation time and prevents unexpected results.
 #'  - `bind_array()` has more streamlined naming options,
@@ -61,7 +64,14 @@
 #' 
 #' 
 #' @returns
-#' An array. \cr  \cr
+#' An array as a result from the (broadcasted) binding. \cr
+#' \cr
+#' The type of the result is determined from the highest type of any of the inputs. \cr
+#' The hierarchy of types is: \cr
+#' raw < logical < integer < double < complex < character < list . \cr
+#' \cr
+#' If one of the input arrays is a \link{broadcaster}, the result will also be a \link{broadcaster}. \cr
+#' \cr
 #' 
 #' 
 #' @references Plate T, Heiberger R (2016). \emph{abind: Combine Multidimensional Arrays}. R package version 1.4-5, \url{https://CRAN.R-project.org/package=abind}.

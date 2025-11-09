@@ -33,7 +33,7 @@
 
 #' @keywords internal
 #' @noRd
-.op_int_fact <- function() {
+.op_int_d <- function() {
   return(c("gcd", "%%", "%/%"))
 }
 

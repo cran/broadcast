@@ -1,8 +1,8 @@
 
 #' @keywords Internal
 #' @noRd
-.C_check_conf_dim <- function(x, y) {
-  .Call("C_check_conf_dim", x = as.integer(x), y = as.integer(y))
+.C_check_conf_dim <- function(xdim, ydim, xlen, ylen) {
+  .Call("C_check_conf_dim", xdim, ydim, xlen, ylen)
 }
 
 #' @keywords Internal
@@ -11,12 +11,6 @@
   .Call("C_pmax", x = as.integer(x), y = as.integer(y))
 }
 
-
-#' @keywords Internal
-#' @noRd
-.C_dims_all_orthogonal <- function(xdim, ydim) {
-  .Call("C_dims_all_orthogonal", xdim = as.integer(xdim), ydim = as.integer(ydim))
-}
 
 
 #' @keywords Internal
@@ -28,9 +22,24 @@
 
 #' @keywords Internal
 #' @noRd
+.C_any_nonarray <- function(x) {
+  .Call("C_any_nonarray", x = x)
+}
+
+
+#' @keywords Internal
+#' @noRd
+.C_arraysize_overflow <- function(xdim, xlen) {
+  .Call("C_arraysize_overflow", xdim, xlen)
+}
+
+
+#' @keywords Internal
+#' @noRd
 .C_lst_ndims <- function(x) {
   .Call("C_lst_ndims", x = x)
 }
+
 
 #' @keywords Internal
 #' @noRd
@@ -79,10 +88,11 @@
   .Call("C_dropdims_which", xdim, ydim, size)
 }
 
+
 #' @keywords Internal
 #' @noRd
-.C_dims_all_equal <- function(xdim, ydim) {
-  .Call("C_dims_all_equal", xdim, ydim)
+.C_dims_allge <- function(xdim, ydim) {
+  .Call("C_dims_allge", xdim, ydim)
 }
 
 #' @keywords Internal
@@ -104,11 +114,6 @@
   .Call("C_sd_lc", w, diag(vc), vc, as.integer(nobs), as.integer(nvars), as.double(bad_rp))
 }
 
-#' @keywords Internal
-#' @noRd
-.C_bindhelper_vdims <- function(x) {
-  .Call("C_bindhelper_vdims", x)
-}
 
 #' @keywords Internal
 #' @noRd
@@ -122,6 +127,19 @@
   .Call("C_bindhelper_max_type", x)
 }
 
+#' @keywords Internal
+#' @noRd
+.C_bindhelper_get_alongdims <- function(lst, along) {
+  .Call("C_bindhelper_get_alongdims", lst, as.integer(along))
+}
+
+
+#' @keywords Internal
+#' @noRd
+.C_bindhelper_need_coerce <- function(lst, mytemplate) {
+  .Call("C_bindhelper_need_coerce", lst, mytemplate)
+}
+
 
 #' @keywords Internal
 #' @noRd
@@ -129,3 +147,14 @@
   .Call("C_chunkify_dims", as.integer(dims), as.integer(chunks))
 }
 
+#' @keywords Internal
+#' @noRd
+.C_unlisthelper_maxlen <- function(x) {
+  .Call("C_unlisthelper_maxlen", x)
+}
+
+#' @keywords Internal
+#' @noRd
+.C_determine_dimmode <- function(xdim, ydim, xlen, ylen) {
+  .Call("C_determine_dimmode", xdim, ydim, xlen, ylen)
+}

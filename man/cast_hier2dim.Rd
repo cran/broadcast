@@ -13,6 +13,7 @@ cast_hier2dim(x, ...)
   maxdepth = 16L,
   recurse_all = FALSE,
   padding = list(NULL),
+  direction.names = 0L,
   ...
 )
 }
@@ -34,6 +35,8 @@ giving the padding value to use when padding is required. \cr
 Padding is used to ensure every all slices of the same dimension in the output
 have equal number of elements
 (for example, all rows must have the same number of columns).}
+
+\item{direction.names}{see argument \code{direction} from the \link{hiernames2dimnames} method.}
 }
 \value{
 An array of type \code{list}, with the dimensions given by \link{hier2dim}. \cr
@@ -41,8 +44,9 @@ If the output needs padding (indicated by \link{hier2dim}),
 the output will have more elements than \code{x},
 filled with a padding value (as specified in the \code{padding} argument). \cr
 \cr
-The array will not have \code{dimnames}; use \code{hiernames2dimnames} to find appropriate \code{dimnames}. \cr
-\cr
+If \code{direction.names = 0} (default), the result will not have any \code{dimnames}; \cr
+the \code{dimnames} can then still be constructed using \link{hiernames2dimnames}. \cr
+If \code{direction.names} is \code{1} or \code{-1}, the result \emph{will} have \code{dimnames}. \cr \cr
 }
 \description{
 \code{cast_hier2dim()} casts a hierarchical/nested list into a dimensional list

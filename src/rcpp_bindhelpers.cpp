@@ -99,3 +99,84 @@ List rcpp_bindhelper_get_dimnames(
   }
   return out;
 }
+
+
+
+inline SEXP rcpp_rep_new_int(
+    int n, int val
+) {
+  
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  int *pout = INTEGER(out);
+  for(int i = 0; i < n; ++i) {
+    pout[i] = val;
+  }
+  
+  UNPROTECT(1);
+  return(out);
+}
+
+//' @keywords internal
+ //' @noRd
+ // [[Rcpp::export(.rcpp_bindhelper_make_input_dims)]]
+ SEXP rcpp_bindhelper_make_input_dims(
+     SEXP dims_old, int start, int max_ndim
+ ) {
+   int n = Rf_length(dims_old);
+   
+   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+   
+   for(int i = 0; i < n; ++i) {
+     SEXP temp_new = rcpp_rep_new_int(max_ndim, 1);
+     SEXP temp_old = Rf_getAttrib(VECTOR_ELT(dims_old, i), R_DimSymbol);
+     
+     int m = Rf_length(temp_old);
+     
+     int *pnew = INTEGER(temp_new);
+     const int *pold = INTEGER_RO(temp_old);
+     
+     for(int j = 0; j < m; ++j) {
+       pnew[j + start] = pold[j];
+     }
+     
+     SET_VECTOR_ELT(out, i, temp_new);
+     
+   }
+   
+   UNPROTECT(1);
+   return out;
+   
+   
+ }
+
+
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.rcpp_bindhelper_anyinput_hasclass)]]
+bool rcpp_bindhelper_anyinput_hasclass(
+    SEXP input, String class2check
+) {
+  
+  
+  int n = Rf_length(input);
+  RObject temp;
+  
+  for(int i  = 0; i < n; ++i) {
+    temp = VECTOR_ELT(input, i);
+    if(temp.hasAttribute("class")) {
+      CharacterVector out_class = temp.attr("class");
+      for(int j = 0; j < out_class.length(); ++j) {
+        String current_class = out_class[j];
+        if(current_class == class2check) {
+          return true;
+        }
+      }
+    }
+    
+  }
+  
+  return false;
+  
+  
+}
+
