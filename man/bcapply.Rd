@@ -21,11 +21,11 @@ that can be stored in a single element of a recursive or atomic array.}
 \item{v}{either \code{NULL}, or single string, giving the scalar type for a single iteration. \cr
 If \code{NULL} (default) or \code{"list"}, the result will be a recursive array. \cr
 If it is certain that, for every iteration,
-\code{f()} always results in a \bold{single atomic scalar},
+\code{f()} always results in a \bold{single atomic scalar} of \bold{exactly} a specific type,
 the user can specify the type in \code{v} to pre-allocate the result. \cr
 Pre-allocating the results leads to slightly faster and more memory efficient code. \cr
 NOTE: Incorrectly specifying \code{v} leads to undefined behaviour; \cr
-when unsure, leave \code{v} at its default value.}
+when unsure, leave \code{v} at its default value. \cr}
 }
 \value{
 An atomic or recursive array with dimensions \code{bc_dim(x, y)}. \cr
@@ -38,14 +38,40 @@ applies a function to 2 arrays element-wise with broadcasting. \cr
 }
 \examples{
 
-x.dim <- c(5, 3, 2)
-x.len <- prod(x.dim)
 
-gen <- function(n) sample(list(letters, month.abb, 1:10), n, TRUE)
+# check for each element in one recursive array if values are present in another:
+mylist <- list(
+  as.raw(0:255),
+  sample(c(TRUE, FALSE, NA), 100, TRUE),
+  0:255,
+  rnorm(10),
+  rnorm(10) + rnorm(10) * -1i,
+  sample(month.abb)
+)
+mylist <- c(mylist, list(mylist))
+x <- array(sample(mylist, 50, TRUE), c(5, 5, 2))
+y <- array(sample(mylist, 50, TRUE), c(5, 5, 2))
 
-x <- array(gen(10), x.dim)
-y <- array(1:5, c(5, 1, 1))
+bcapply(x, y, `\%in\%`) # returns a dimensional list / recursive array
 
-f <- function(x, y) strrep(x, y)
-bcapply(x, y, f, v = "character")
+bcapply(x, y, \(x, y) any(x \%in\% y), v = "logical") # returns logical array
+
+bcapply(x, y, \(x, y) all(x \%in\% y), v = "logical") # returns logical array
+
+
+
+# calculate quartiles for each list item, and return numeric array of quartiles:
+x <- list(
+  a = 1:10,
+  beta = exp(-3:3),
+  logic = c(TRUE,FALSE,FALSE,TRUE)
+)
+print(x)
+quantiles <- array(c(1:3/4), c(1, 3))
+colnames(quantiles) <- paste0("q = ", quantiles)
+print(quantiles)
+
+out <- bcapply(x, quantiles, \(x, y) quantile(x, probs = y), v = "double")
+print(out)
+typeof(out)
 }

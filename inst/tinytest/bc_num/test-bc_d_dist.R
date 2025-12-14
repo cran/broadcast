@@ -5,32 +5,18 @@ errorfun <- function(tt) {
   
   if(isFALSE(tt)) stop(print(tt))
 }
-
 .test_binary <- broadcast:::.test_binary
 .test_binary_class <- broadcast:::.test_binary_class
 .test_binary_zerolen <- broadcast:::.test_binary_zerolen
-
-test_make_dims <- function(n) {
-  
-  # make dimensions that are randomly of size 1 or 5:
-  out <- lapply(1:n, \(n)sample(c(1, 5), 1)) |> unlist()
-  
-  # check if the dimensions produce a too large object.
-  # If so, replace one >1L dimension with 1L
-  if(prod(out) > 5000L) {
-    ind <- which(out > 1L)[1L]
-    out[ind] <- 1L
-  }
-  return(out)
-}
-.return_missing <- broadcast:::.return_missing
-types <- "raw"
+types <- c("double", "integer", "logical")
+prec <- sqrt(.Machine$double.eps)
 
 
 # equals ====
-bc.fun <- function(x, y) bc.raw(x, y, "==")
+bc.fun <- function(x, y) bc.d(x, y, "d==")
 base.fun <- function(x, y) {
-  as_raw(x == y)
+  out <- abs(x - y) < prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
@@ -43,23 +29,25 @@ expect_equal(
 
 
 # unequals ====
-bc.fun <- function(x, y) bc.raw(x, y, "!=")
+bc.fun <- function(x, y) bc.d(x, y, "d!=")
 base.fun <- function(x, y) {
-  as_raw(x != y)
+  out <- abs(x - y) >= prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
+enumerate <- enumerate + res$i # count number of tests
 # test results:
 expect_equal(
   res$expected, res$out
 )
-enumerate <- enumerate + res$i # count number of tests
 
 
 # smaller ====
-bc.fun <- function(x, y) bc.raw(x, y, "<")
+bc.fun <- function(x, y) bc.d(x, y, "d<")
 base.fun <- function(x, y) {
-  as_raw(x < y)
+  out <- (x - y) <= -prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
@@ -71,9 +59,10 @@ expect_equal(
 
 
 # greater ====
-bc.fun <- function(x, y) bc.raw(x, y, ">")
+bc.fun <- function(x, y) bc.d(x, y, "d>")
 base.fun <- function(x, y) {
-  as_raw(x > y)
+  out <- (x - y) >= prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
@@ -86,9 +75,10 @@ expect_equal(
 
 
 # se ====
-bc.fun <- function(x, y) bc.raw(x, y, "<=")
+bc.fun <- function(x, y) bc.d(x, y, "d<=")
 base.fun <- function(x, y) {
-  as_raw(x <= y)
+  out <- (x - y) < prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
@@ -99,10 +89,11 @@ expect_equal(
 )
 
 
-# greater ====
-bc.fun <- function(x, y) bc.raw(x, y, ">=")
+# ge ====
+bc.fun <- function(x, y) bc.d(x, y, "d>=")
 base.fun <- function(x, y) {
-  as_raw(x >= y)
+  out <- (x - y) > -prec
+  return(out)
 }
 res <- .test_binary(bc.fun, base.fun, types, types)
 
@@ -115,7 +106,7 @@ expect_equal(
 
 
 # attributes tests ====
-bc.fun <- function(x, y) { bc.raw(x, y, "==")}
+bc.fun <- function(x, y) { bc.d(x, y, "d==")}
 
 res <- .test_binary_class(bc.fun, types, types)
 expect_equal(
@@ -131,8 +122,8 @@ enumerate <- enumerate + res$i
 
 
 # zerolen tests ====
-bc.fun <- function(x, y) { bc.raw(x, y, "==")}
-res <- .test_binary_zerolen(bc.fun, is.raw, types, types)
+bc.fun <- function(x, y) { bc.d(x, y, "d==")}
+res <- .test_binary_zerolen(bc.fun, is.logical, types, types)
 expect_true(all(res$is_OK_type))
 expect_equal(
   res$expected_bc, res$out_bc

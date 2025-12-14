@@ -2,8 +2,8 @@
 #' 
 #' @description
 #' 
-#' Base 'R' comes with relational (==, !=, etc.),
-#' arithmetic (+, -, *, /, etc.), and logical/bit-wise (&, |) operators. \cr
+#' Base 'R' comes with relational,
+#' arithmetic and logical/bit-wise (&, |) operators. \cr
 #' 'broadcast' provides 2 ways to use these operators with broadcasting. \cr
 #' \cr
 #' The first (and simple) way is to use the \link{broadcaster} class,
@@ -14,7 +14,7 @@
 #' The second way is to use the large set of `bc.`- functions. \cr
 #' These offer much greater control and more operators than the previous method,
 #' and has less risk of running into conflicting methods. \cr
-#' But it does not support operator precedence. \cr
+#' But they do not support operator precedence. \cr
 #' \cr
 #' 
 #' 
@@ -25,15 +25,14 @@
 #' and no other class (like `bit64`) interferes,
 #' broadcasting will be used. \cr
 #' \cr
-#' The following arithmetic operators have a 'broadcaster' method:
-#' +, -, *, /, ^, %%, %/% \cr
-#' The following relational operators have a 'broadcaster' method:
-#' `r paste0(broadcast:::.op_rel(), collapse = ", ")` \cr
-#' And finally, the & and | operators also have a 'broadcaster' method. \cr
-#' \cr
-#' As the \link{broadcaster} operator methods simply overload the base operators,
-#' operator precedence rules are preserved for the \link{broadcaster} operator methods. \cr
-#' \cr
+#' The following operators have a 'broadcaster' method:
+#' 
+#' ```{r, eval = FALSE, echo = TRUE}
+#' +, -, *, /, ^, %%, %/%
+#' ==, !=, <, >, <=, >=
+#' &, |
+#' 
+#' ```
 #' See also the Examples section below. \cr
 #' \cr
 #' 
@@ -67,7 +66,7 @@
 #' @section Attribute Handling: 
 #' The `bc.` functions and the overloaded operators generally do \bold{not}
 #' preserve attributes, unlike the base 'R' operators,
-#' except for (dim)names and the \link{broadcaster} class attribute (and related attributes). \cr
+#' except for `names`, `dimnames`, `comment` (if appropriate), and the \link{broadcaster} class attribute (and related attributes). \cr
 #' \cr
 #' Broadcasting often results in an object with more dimensions, larger dimensions,
 #' and/or larger length than the original objects. \cr
@@ -76,9 +75,6 @@
 #' And the various classes provided by the 'bit' package have length-related attributes. \cr
 #' So class attributes cannot be guaranteed to hold for the resulting objects when broadcasting is involved. \cr
 #' \cr
-#' The `bc.` functions and the overloaded operators
-#' \bold{always} preserve the "broadcaster" attribute,
-#' as this is necessary to chain together broadcasted operations. \cr
 #' \cr
 #' Almost all functions provided by 'broadcast' are S3 or S4 generics; \cr
 #' methods can be written for them for specific classes,

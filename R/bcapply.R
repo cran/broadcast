@@ -11,11 +11,11 @@
 #' @param v either `NULL`, or single string, giving the scalar type for a single iteration. \cr
 #' If `NULL` (default) or \code{"list"}, the result will be a recursive array. \cr
 #' If it is certain that, for every iteration,
-#' `f()` always results in a \bold{single atomic scalar},
+#' `f()` always results in a \bold{single atomic scalar} of \bold{exactly} a specific type,
 #' the user can specify the type in `v` to pre-allocate the result. \cr
 #' Pre-allocating the results leads to slightly faster and more memory efficient code. \cr
 #' NOTE: Incorrectly specifying `v` leads to undefined behaviour; \cr
-#' when unsure, leave `v` at its default value.
+#' when unsure, leave `v` at its default value. \cr
 #' @param ... further arguments passed to or from methods. \cr \cr
 #' 
 #' 
@@ -69,6 +69,15 @@ setMethod(
   if(is.null(v)) {
     v <- "list"
   }
+  if(length(v) > 1L) {
+    stop(simpleError("`v` must be a single string or `NULL`", call = abortcall))
+  }
+  if(v == "numeric") {
+    stop(simpleError(
+      "`numeric` is an ambiguous type; please specify either `integer` or `double`, or leave `v` blank if unsure",
+      call = abortcall
+    ))
+  }
   if(!v %in% c("raw", "logical", "integer", "double", "complex", "character", "list")) {
     stop(simpleError("unsupported type specified for `v`", call = abortcall))
   }
@@ -76,7 +85,7 @@ setMethod(
   
   # early zero-len return:
   if(length(x) == 0L || length(y) == 0L) {
-    return(vector(v, 0L))
+    return(.binary_return_zerolen(x, y, FALSE, v))
   }
   
   
