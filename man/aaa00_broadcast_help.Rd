@@ -12,7 +12,7 @@ Broadcasted Array Operations Like 'NumPy' \cr \cr
 
 Implements efficient 'NumPy'-like broadcasted operations for atomic and recursive arrays.
 
-In the context of operations involving 2 (or more) arrays, “broadcasting” refers to efficiently recycling array dimensions, without making copies.
+In the context of operations involving 2 (or more) arrays, “broadcasting” (AKA singleton expansion) refers to efficiently recycling array dimensions, without making copies.
 
 Besides linking to 'Rcpp', 'broadcast' does not use any external libraries in any way;
 'broadcast' was essentially made from scratch and can be installed out-of-the-box.
@@ -93,7 +93,9 @@ which preserve names and dimensions - convenient for arrays. \cr
 \link[=sd_lc]{simple linear algebra functions for statistics}. \cr
 \cr
 And 'broadcast' comes with some helper functions: \cr
-\link{bc_dim}, \link{ndim}, \link{lst.ndim}, \link{rep_dim}, \link{vector2array}. \cr \cr
+\link{checkNA}, \link{checkNULL}, \cr
+\link{bc_dim}, \link{ndim}, \link{lst.ndim}, \link{rep_dim}, \cr
+\link{vector2array}. \cr \cr
 }
 
 \section{Supported Structures}{

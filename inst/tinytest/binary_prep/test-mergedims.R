@@ -6,7 +6,6 @@ errorfun <- function(tt) {
   if(isFALSE(tt)) stop(print(tt))
 }
 
-mergeable <- broadcast:::.rcpp_is_mergeable_with_prev
 mergedims <- broadcast:::.rcpp_mergedims
 
 
@@ -18,19 +17,17 @@ for(i in 1:8) {
   x.dim <- rep(c(1L, n), i)
   y.dim <- rep(c(n, 1L), i)
   
-  m <- mergeable(x.dim == 1L, y.dim == 1L)
   expect_equal(
     list(x.dim, y.dim),
-    mergedims(x.dim, y.dim, m)
+    mergedims(x.dim, y.dim)
   ) |> errorfun()
   
   x.dim <- rep(c(1L, n), i)
   y.dim <- rep(c(n, 1L), i)
   
-  m <- mergeable(y.dim == 1L, x.dim == 1L)
   expect_equal(
     list(y.dim, x.dim),
-    mergedims(y.dim, x.dim, m)
+    mergedims(y.dim, x.dim)
   ) |> errorfun()
   
   
@@ -43,18 +40,16 @@ enumerate <- enumerate + 16
 n <- as.integer(2^31 - 2)
 x.dim <- c(n, n, 1L)
 y.dim <- c(1L, 1L, n)
-m <- mergeable(x.dim == 1L, y.dim == 1L)
 expect_equal(
   list(x.dim, y.dim),
-  mergedims(x.dim, y.dim, m)
+  mergedims(x.dim, y.dim)
 ) |> errorfun()
 
 x.dim <- c(n, 1L, 1L)
 y.dim <- c(1L, n, n)
-m <- mergeable(x.dim == 1L, y.dim == 1L)
 expect_equal(
   list(x.dim, y.dim),
-  mergedims(x.dim, y.dim, m)
+  mergedims(x.dim, y.dim)
 ) |> errorfun()
 
 enumerate <- enumerate + 2L
@@ -68,8 +63,7 @@ expected <- list(
   c(n^2, 1, n^4) |> as.integer(),
   c(1, n, 1) |> as.integer()
 )
-m <- mergeable(x==1L, y==1L)
-out <- mergedims(x, y, m)
+out <- mergedims(x, y)
 expect_equal(
   expected, out
 )

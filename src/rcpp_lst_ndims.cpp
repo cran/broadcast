@@ -1,19 +1,19 @@
-#include <R.h>
-#include <Rdefines.h>
-#include <R_ext/Error.h>
+#include <Rcpp/Lightest>
+using namespace Rcpp;
 
 
-
-SEXP C_lst_ndims ( SEXP x ) {
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.rcpp_lst_ndims)]]
+SEXP rcpp_lst_ndims ( SEXP x ) {
 
 
 if(TYPEOF(x) != VECSXP) {
-  error("`x` must be a list");
+  stop("`x` must be a list");
 }
 
 int n = Rf_length(x);
-SEXP tempout;
-SEXP tempdim;
+RObject tempout;
 int tempndims;
 
 SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
@@ -21,8 +21,7 @@ int *pout = INTEGER(out);
 
 for(int i = 0; i < n; ++i) {
   tempout = VECTOR_ELT(x, i);
-  tempdim = Rf_getAttrib(tempout, R_DimSymbol);
-  tempndims = Rf_length(tempdim);
+  tempndims = Rf_length(tempout.attr("dim"));
   pout[i] = tempndims;
 }
 
