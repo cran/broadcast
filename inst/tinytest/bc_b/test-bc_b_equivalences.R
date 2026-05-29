@@ -12,10 +12,57 @@ errorfun <- function(tt) {
 types <- c("logical", "integer", "raw")
 
 
-# and ====
-bc.fun <- function(x, y) bc.b(x, y, "&")
+# equals ====
+bc.fun <- function(x, y) bc.b(x, y, "==")
 base.fun <- function(x, y) {
-  out <- as_bool(x) & as_bool(y)
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  out <- (x2 & y2) | (!x2 & !y2)
+  if(is.raw(x) && is.raw(y)) {
+    out <- as_raw(out)
+  }
+  return(out)
+  
+}
+res <- .test_binary(bc.fun, base.fun, types, types)
+
+enumerate <- enumerate + res$i # count number of tests
+# test results:
+expect_equal(
+  res$expected, res$out
+)
+
+
+# unequals ====
+bc.fun <- function(x, y) bc.b(x, y, "!=")
+base.fun <- function(x, y) {
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  
+  out <-  xor(x2, y2)
+  if(is.raw(x) && is.raw(y)) {
+    out <- as_raw(out)
+  }
+  return(out)
+  
+}
+res <- .test_binary(bc.fun, base.fun, types, types)
+
+enumerate <- enumerate + res$i # count number of tests
+# test results:
+expect_equal(
+  res$expected, res$out
+)
+
+
+
+# smaller ====
+bc.fun <- function(x, y) bc.b(x, y, "<")
+base.fun <- function(x, y) {
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  
+  out <- ifelse(is.na(x2) | is.na(y2), NA, (!x2 & y2))
   if(is.raw(x) && is.raw(y)) {
     out <- as_raw(out)
   }
@@ -33,11 +80,13 @@ expect_equal(
 
 
 
-
-# or ====
-bc.fun <- function(x, y) bc.b(x, y, "|")
+# greater ====
+bc.fun <- function(x, y) bc.b(x, y, ">")
 base.fun <- function(x, y) {
-  out <- as_bool(x) | as_bool(y)
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  
+  out <- ifelse(is.na(x2) | is.na(y2), NA, (x2 & !y2))
   if(is.raw(x) && is.raw(y)) {
     out <- as_raw(out)
   }
@@ -54,11 +103,13 @@ expect_equal(
 
 
 
-
-# xor ====
-bc.fun <- function(x, y) bc.b(x, y, "xor")
+# se ====
+bc.fun <- function(x, y) bc.b(x, y, "<=")
 base.fun <- function(x, y) {
-  out <- as_bool(x) != as_bool(y)
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  
+  out <- ifelse(is.na(x2) | is.na(y2), NA, (!x2 & y2) | (y2 == x2))
   if(is.raw(x) && is.raw(y)) {
     out <- as_raw(out)
   }
@@ -74,12 +125,14 @@ expect_equal(
 )
 
 
-
-
-# nand ====
-bc.fun <- function(x, y) bc.b(x, y, "nand")
+# ge ====
+bc.fun <- function(x, y) bc.b(x, y, ">=")
 base.fun <- function(x, y) {
-  out <- !(as_bool(x) & as_bool(y))
+  
+  x2 <- as_bool(x)
+  y2 <- as_bool(y)
+  
+  out <- (ifelse(is.na(x2) | is.na(y2), NA, x2 & !y2) | (y2 == x2))
   if(is.raw(x) && is.raw(y)) {
     out <- as_raw(out)
   }
@@ -93,85 +146,5 @@ enumerate <- enumerate + res$i # count number of tests
 expect_equal(
   res$expected, res$out
 )
-
-
-
-# nor ====
-bc.fun <- function(x, y) bc.b(x, y, "nor")
-base.fun <- function(x, y) {
-  out <- !(as_bool(x) | as_bool(y))
-  if(is.raw(x) && is.raw(y)) {
-    out <- as_raw(out)
-  }
-  return(out)
-  
-}
-res <- .test_binary(bc.fun, base.fun, types, types)
-
-enumerate <- enumerate + res$i # count number of tests
-# test results:
-expect_equal(
-  res$expected, res$out
-)
-
-
-
-
-
-# attributes tests (and/or) ====
-bc.fun <- function(x, y) { bc.b(x, y, "&")}
-
-types <- c("raw", "logical", "integer", "int53")
-
-res <- .test_binary_class(bc.fun, types, types)
-expect_equal(
-  res$expected_bc, res$out_bc
-)
-expect_false(
-  identical(res$expected_comm, res$out_comm)
-)
-expect_false(
-  identical(res$expected_ma, res$out_ma)
-)
-
-enumerate <- enumerate + res$i
-
-
-# zerolen tests (and/or) ====
-bc.fun <- function(x, y) { bc.b(x, y, "&")}
-
-types <- c("raw", "logical", "integer", "int53")
-res <- .test_binary_zerolen(bc.fun, is.logical, "logical", types)
-expect_true(all(res$is_OK_type))
-expect_equal(
-  res$expected_bc, res$out_bc
-)
-expect_false(
-  identical(res$expected_comm, res$out_comm)
-)
-enumerate <- enumerate + res$i
-
-
-types <- c("raw", "logical", "integer", "int53")
-res <- .test_binary_zerolen(bc.fun, is.logical, types, "logical")
-expect_true(all(res$is_OK_type))
-expect_equal(
-  res$expected_bc, res$out_bc
-)
-expect_false(
-  identical(res$expected_comm, res$out_comm)
-)
-enumerate <- enumerate + res$i
-
-res <- .test_binary_zerolen(bc.fun, is.raw, "raw", "raw")
-expect_true(all(res$is_OK_type))
-expect_equal(
-  res$expected_bc, res$out_bc
-)
-expect_false(
-  identical(res$expected_comm, res$out_comm)
-)
-enumerate <- enumerate + res$i
-
 
 
