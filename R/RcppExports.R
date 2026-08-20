@@ -323,6 +323,20 @@ NULL
 NULL
 
 #' @keywords internal
+NULL
+
+#' @keywords internal
+NULL
+
+.rcpp_bindhelper_get_alongdims <- function(lst, along) {
+    .Call(`_broadcast_rcpp_bindhelper_get_alongdims`, lst, along)
+}
+
+.rcpp_bindhelper_sum_along <- function(lst_dims, along) {
+    .Call(`_broadcast_rcpp_bindhelper_sum_along`, lst_dims, along)
+}
+
+#' @keywords internal
 #' @noRd
 .rcpp_bindhelper_setnames <- function(x, ind, rp) {
     invisible(.Call(`_broadcast_rcpp_bindhelper_setnames`, x, ind, rp))
@@ -330,8 +344,8 @@ NULL
 
 #' @keywords internal
 #' @noRd
-.rcpp_bindhelper_conf_dims_all <- function(lst_dims, target, along, max_bc) {
-    .Call(`_broadcast_rcpp_bindhelper_conf_dims_all`, lst_dims, target, along, max_bc)
+.rcpp_bindhelper_conf_dims_all <- function(lst_dims, target, along) {
+    .Call(`_broadcast_rcpp_bindhelper_conf_dims_all`, lst_dims, target, along)
 }
 
 #' @keywords internal
@@ -430,18 +444,6 @@ NULL
 
 #' @keywords internal
 #' @noRd
-.rcpp_is_ma <- function(x) {
-    .Call(`_broadcast_rcpp_is_ma`, x)
-}
-
-#' @keywords internal
-#' @noRd
-.rcpp_set_ma <- function(x, newclass) {
-    invisible(.Call(`_broadcast_rcpp_set_ma`, x, newclass))
-}
-
-#' @keywords internal
-#' @noRd
 .rcpp_clone <- function(x) {
     .Call(`_broadcast_rcpp_clone`, x)
 }
@@ -497,6 +499,15 @@ NULL
 }
 
 #' @keywords internal
+#' @noRd
+.rcpp_set_attr <- function(x, name, value) {
+    invisible(.Call(`_broadcast_rcpp_set_attr`, x, name, value))
+}
+
+#' @keywords internal
+NULL
+
+#' @keywords internal
 NULL
 
 #' @keywords internal
@@ -504,6 +515,49 @@ NULL
 
 #' @keywords internal
 NULL
+
+#' @keywords internal
+NULL
+
+#' @keywords internal
+NULL
+
+#' @keywords internal
+NULL
+
+#' @keywords internal
+#' @noRd
+.rcpp_max_ndim <- function(xndim0, yndim0) {
+    .Call(`_broadcast_rcpp_max_ndim`, xndim0, yndim0)
+}
+
+#' @keywords internal
+#' @noRd
+.rcpp_virt_alloc_dim <- function(x, ndim) {
+    .Call(`_broadcast_rcpp_virt_alloc_dim`, x, ndim)
+}
+
+.rcpp_virt_conformalize <- function(x_dim, y_dim, x_ndim, y_ndim, xlen, ylen) {
+    invisible(.Call(`_broadcast_rcpp_virt_conformalize`, x_dim, y_dim, x_ndim, y_ndim, xlen, ylen))
+}
+
+.rcpp_virt_make_outdim_orig <- function(x, y, x_dim, y_dim, x_ndim_ro, y_ndim_ro) {
+    .Call(`_broadcast_rcpp_virt_make_outdim_orig`, x, y, x_dim, y_dim, x_ndim_ro, y_ndim_ro)
+}
+
+.rcpp_virt_make_outlen <- function(out_dim, xlen, ylen) {
+    .Call(`_broadcast_rcpp_virt_make_outlen`, out_dim, xlen, ylen)
+}
+
+.rcpp_virt_part1_test <- function(x, y, x_ndim, y_ndim) {
+    .Call(`_broadcast_rcpp_virt_part1_test`, x, y, x_ndim, y_ndim)
+}
+
+#' @keywords internal
+#' @noRd
+.rcpp_virt_drop_dims <- function(x_dim, y_dim, x_ndim, y_ndim, xlen, ylen) {
+    invisible(.Call(`_broadcast_rcpp_virt_drop_dims`, x_dim, y_dim, x_ndim, y_ndim, xlen, ylen))
+}
 
 .rcpp_mergedims_get_endrange <- function(x, y, pos, intmax) {
     .Call(`_broadcast_rcpp_mergedims_get_endrange`, x, y, pos, intmax)
@@ -519,7 +573,23 @@ NULL
 
 #' @keywords internal
 #' @noRd
-.rcpp_set_attr <- function(x, name, value) {
-    invisible(.Call(`_broadcast_rcpp_set_attr`, x, name, value))
+.rcpp_mergedims_set <- function(x_dim, y_dim, x_ndim, y_ndim) {
+    invisible(.Call(`_broadcast_rcpp_mergedims_set`, x_dim, y_dim, x_ndim, y_ndim))
+}
+
+#' @keywords internal
+#' @noRd
+.rcpp_virt_dimmode <- function(xdim, ydim, xlen, ylen, ndim) {
+    .Call(`_broadcast_rcpp_virt_dimmode`, xdim, ydim, xlen, ylen, ndim)
+}
+
+#' @keywords internal
+#' @noRd
+.rcpp_virt_make_outdim_simp <- function(x_dim, y_dim, n) {
+    .Call(`_broadcast_rcpp_virt_make_outdim_simp`, x_dim, y_dim, n)
+}
+
+.rcpp_virt_binary_prep <- function(x, y, x_ndim, y_ndim) {
+    .Call(`_broadcast_rcpp_virt_binary_prep`, x, y, x_ndim, y_ndim)
 }
 

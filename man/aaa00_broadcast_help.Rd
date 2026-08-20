@@ -12,7 +12,7 @@ Broadcasted Array Operations Like 'NumPy' \cr \cr
 
 Implements efficient 'NumPy'-like broadcasted operations for atomic and recursive arrays.
 
-In the context of operations involving 2 (or more) arrays, “broadcasting” (AKA singleton expansion) refers to efficiently recycling array dimensions, without making copies.
+In the context of operations involving 2 (or more) arrays,  “broadcasting” (AKA singleton expansion) refers to efficiently recycling array dimensions,  without making copies.
 
 Besides linking to 'Rcpp', 'broadcast' does not use any external libraries in any way;
 'broadcast' was essentially made from scratch and can be installed out-of-the-box.
@@ -22,9 +22,9 @@ The implementations available in 'broadcast' include, but are not limited to, th
 \item Broadcasted element-wise operations on any 2 arrays;
 they support a large set of
 relational, arithmetic, Boolean, string, and bit-wise operations.
-\item A faster, more memory efficient, and broadcasted abind-like function, for binding arrays along an arbitrary dimension.
+\item A faster, more memory efficient, and broadcasted abind-like function,   for binding arrays along an arbitrary dimension.
 \item Broadcasted ifelse-like and apply-like functions.
-\item Casting functions, that cast subset-groups of an array to a new dimension, cast nested lists to dimensional lists, and vice-versa.
+\item Casting functions,   that cast subset-groups of an array to a new dimension, cast nested lists to dimensional lists, and vice-versa.
 \item A few linear algebra functions for statistics.
 }
 
@@ -111,5 +111,5 @@ dimensionless vectors are interpreted as column-vectors in broadcasted array ope
 Harris, C.R., Millman, K.J., van der Walt, S.J. et al. \emph{Array programming with NumPy}. Nature 585, 357–362 (2020). \doi{10.1038/s41586-020-2649-2}. (\href{https://www.nature.com/articles/s41586-020-2649-2}{Publisher link}).
 }
 \author{
-\strong{Author, Maintainer}: Tony Wilkes \email{tony_a_wilkes@outlook.com} (\href{https://orcid.org/0000-0001-9498-8379}{ORCID})
+\strong{Author, Maintainer}: Tony Wilkes \email{tonywilkes.nl@gmail.com} (\href{https://orcid.org/0000-0001-9498-8379}{ORCID})
 }

@@ -13,22 +13,10 @@
 #' @param x,y conformable vectors/arrays of type `logical`, `numeric`, or `raw`. \cr
 #' Note that input with type of `double` will be coerced to `integer`.
 #' @param op a single string, giving the operator. \cr
-#' Supported Boolean operators: `r paste0(c(broadcast:::.op_b(), broadcast:::.op_rel()), collapse = ", ")`.
+#' Supported Boolean operators: `r paste0(broadcast:::.op_b(), collapse = ", ")` \cr
+#' Supported relational operators: `r paste0(broadcast:::.op_rel(), collapse = ", ")`. \cr
+#' "nand" is defined here as `!(x & y)`, and "nor" is defined here as `!(x | y)`.
 #' @param ... further arguments passed to or from methods. \cr \cr
-#'
-#' @details
-#' `bc.b()` efficiently casts the input to logical. \cr
-#' Since the input is treated as logical, the following equalities hold for `bc.b()`:
-#' 
-#'  - "==" is equivalent to `(x & y) | (!x & !y)`, but faster;
-#'  - "!=" is equivalent to `xor(x, y)`;
-#'  - "<" is equivalent to `(!x & y)`, but faster;
-#'  - ">" is equivalent to `(x & !y)`, but faster;
-#'  - "<=" is equivalent to `(!x & y) | (y == x)`, but faster;
-#'  - ">=" is equivalent to `(x & !y) | (y == x)`, but faster. \cr
-#'  
-#'  Note that these are only equal in the absence of `NA`s,
-#'  since `&` and `|` handle `NA`s diffently from the relational operators. \cr \cr
 #'
 #'
 #' @returns
@@ -107,7 +95,7 @@ setMethod(
     return(.binary_return_zerolen(x, y, TRUE, out.type))
   }
   
-  prep <- .binary_prep(x, y, abortcall)
+  prep <- .binary_prep(x, y)
   x.dim <- prep[[1L]]
   y.dim <- prep[[2L]]
   out.dimorig <- prep[[3L]]
@@ -160,7 +148,7 @@ setMethod(
     return(.binary_return_zerolen(x, y, TRUE, out.type))
   }
   
-  prep <- .binary_prep(x, y, abortcall)
+  prep <- .binary_prep(x, y)
   x.dim <- prep[[1L]]
   y.dim <- prep[[2L]]
   out.dimorig <- prep[[3L]]

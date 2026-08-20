@@ -12,17 +12,17 @@
 #' @param ... further arguments passed to or from methods. \cr \cr
 #' 
 #' @details
-#' The "&", "|", "xor", and "nand" operators given in `bc.bit()`
-#' perform BIT-WISE AND, OR, XOR, and NAND operations, respectively. \cr
+#' The "&", "|", "xor", "nand" and "nor" operators given in `bc.bit()`
+#' perform BIT-WISE AND, OR, XOR, NAND and NOR operations, respectively. \cr
 #' \cr
 #' The relational operators given in `bc.bit()` perform BIT-WISE relational operations:
 #' 
-#'  - "==" is equivalent to bit-wise `(x & y) | (!x & !y)`, but faster;
+#'  - "==" is equivalent to bit-wise `!xor(x, y)`, but faster;
 #'  - "!=" is equivalent to bit-wise `xor(x, y)`;
 #'  - "<" is equivalent to bit-wise `(!x & y)`, but faster;
 #'  - ">" is equivalent to bit-wise `(x & !y)`, but faster;
-#'  - "<=" is equivalent to bit-wise `(!x & y) | (y == x)`, but faster;
-#'  - ">=" is equivalent to bit-wise `(x & !y) | (y == x)`, but faster. \cr \cr
+#'  - "<=" is equivalent to bit-wise `(!x | y)`, but faster;
+#'  - ">=" is equivalent to bit-wise `(x | !y)`, but faster. \cr \cr
 #'
 #' The "<<" and ">>" operators perform bit-wise left-shift and right-shift,
 #' respectively,
@@ -104,7 +104,7 @@ setMethod(
     return(.binary_return_zerolen(x, y, TRUE))
   }
   
-  prep <- .binary_prep(x, y, abortcall)
+  prep <- .binary_prep(x, y)
   x.dim <- prep[[1L]]
   y.dim <- prep[[2L]]
   out.dimorig <- prep[[3L]]
@@ -147,7 +147,7 @@ setMethod(
     return(.binary_return_zerolen(x, y, TRUE))
   }
   
-  prep <- .binary_prep(x, y, abortcall)
+  prep <- .binary_prep(x, y)
   x.dim <- prep[[1L]]
   y.dim <- prep[[2L]]
   out.dimorig <- prep[[3L]]

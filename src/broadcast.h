@@ -3,6 +3,101 @@
 #ifndef BROADCAST_H
 #define BROADCAST_H
 
+#include <Rcpp.h>
+
+
+// 
+// 
+// ********************************************************************************
+// INLINE FUNCTIONS
+// 
+// ********************************************************************************
+// 
+// 
+
+
+
+inline int inline_bool_AND(
+  int x, int y
+) {
+  bool xFALSE = x != NA_INTEGER && x == 0;
+  bool yFALSE = y != NA_INTEGER && y == 0;
+  if(xFALSE || yFALSE) {
+    return 0;
+  }
+  else if(x == NA_INTEGER || y == NA_INTEGER) {
+    return NA_LOGICAL;
+  }
+  else {
+    return ((bool)x && bool(y));
+  }
+}
+
+inline int inline_bool_OR(
+  int x, int y
+) {
+  bool xTRUE = x != NA_INTEGER && x != 0;
+  bool yTRUE = y != NA_INTEGER && y != 0;
+  if(xTRUE || yTRUE) {
+    return 1;
+  }
+  else if(x == NA_INTEGER || y == NA_INTEGER) {
+    return NA_LOGICAL;
+  }
+  else {
+    return ((bool)x || bool(y));
+  }
+}
+
+inline int inline_bool_XOR(
+  int x, int y
+) {
+  if(x == NA_INTEGER || y == NA_INTEGER) {
+    return NA_LOGICAL;
+  }
+  else {
+    return ((bool)x != bool(y));
+  }
+}
+
+
+inline int inline_bool_NAND(
+  int x, int y
+) {
+  bool xFALSE = x != NA_INTEGER && x == 0;
+  bool yFALSE = y != NA_INTEGER && y == 0;
+  if(xFALSE || yFALSE) {
+    return 1;
+  }
+  else if(x == NA_INTEGER || y == NA_INTEGER) {
+    return NA_LOGICAL;
+  }
+  else {
+    int out = ((bool)x + bool(y)) < 2;
+    return out;
+  }
+}
+
+
+inline int inline_bool_NOR(
+  int x, int y
+) {
+  bool xTRUE = x != NA_INTEGER && x != 0;
+  bool yTRUE = y != NA_INTEGER && y != 0;
+  if(xTRUE || yTRUE) {
+    return 0;
+  }
+  else if(x == NA_INTEGER || y == NA_INTEGER) {
+    return NA_LOGICAL;
+  }
+  else {
+    int out = !((bool)x || bool(y));
+    return out;
+  }
+}
+
+
+
 
 // 
 // 
@@ -971,63 +1066,35 @@
     case 1:	\
     {	\
       DIMCODE(                      \
-        MACRO_ACTION_BOOLEAN(       \
-          px[flatind_x], py[flatind_y],       \
-          xFALSE || yFALSE,         \
-          MACRO_ASSIGN_C(0),        \
-          MACRO_ASSIGN_C(NA_LOGICAL),                                 \
-          MACRO_ASSIGN_C((bool)px[flatind_x] && (bool)py[flatind_y])  \
-        )                                                       \
+        pout[flatind_out] = inline_bool_AND(px[flatind_x], py[flatind_y]) \
       );                                                       \
       break;	\
     }	\
     case 2:	\
     {	\
       DIMCODE(                                                          \
-        MACRO_ACTION_BOOLEAN(                                           \
-          px[flatind_x], py[flatind_y],       \
-          xTRUE || yTRUE,                   \
-          MACRO_ASSIGN_C(1),                                            \
-          MACRO_ASSIGN_C(NA_LOGICAL),                                   \
-          MACRO_ASSIGN_C((bool)px[flatind_x] || (bool)py[flatind_y])  \
-        )                                                       \
+        pout[flatind_out] = inline_bool_OR(px[flatind_x], py[flatind_y]) \
       );                                                        \
       break;	\
     }	\
     case 3:	\
     {	\
       DIMCODE(                                                          \
-        MACRO_ACTION2(                                                  \
-          px[flatind_x] == NA_INTEGER || py[flatind_y] == NA_INTEGER,   \
-          MACRO_ASSIGN_C(NA_LOGICAL),                                   \
-          MACRO_ASSIGN_C((bool)px[flatind_x] != (bool)py[flatind_y])  \
-        )                                                       \
+        pout[flatind_out] = inline_bool_XOR(px[flatind_x], py[flatind_y]) \
       );                                                                \
       break;	\
     }	\
     case 4:	\
     {	\
       DIMCODE(                                                          \
-        MACRO_ACTION_BOOLEAN(                                           \
-          px[flatind_x], py[flatind_y],       \
-          xFALSE || yFALSE,                   \
-          MACRO_ASSIGN_C(1),                                            \
-          MACRO_ASSIGN_C(NA_LOGICAL),                                   \
-          MACRO_ASSIGN_C(((bool)px[flatind_x] + (bool)py[flatind_y] < 2))  \
-        )                                                       \
+        pout[flatind_out] = inline_bool_NAND(px[flatind_x], py[flatind_y])  \
       );                                                        \
       break;	\
     }	\
     case 5:	\
     {	\
       DIMCODE(                                                          \
-        MACRO_ACTION_BOOLEAN(                                           \
-          px[flatind_x], py[flatind_y],       \
-          xTRUE || yTRUE,                   \
-          MACRO_ASSIGN_C(0),                                            \
-          MACRO_ASSIGN_C(NA_LOGICAL),                                   \
-          MACRO_ASSIGN_C(!((bool)px[flatind_x] || (bool)py[flatind_y]))  \
-        )                                                       \
+        pout[flatind_out] = inline_bool_NOR(px[flatind_x], py[flatind_y]) \
       );                                                        \
       break;	\
     }	\
@@ -1524,7 +1591,7 @@
         MACRO_ACTION2(                                                    \
           px[flatind_x] == NA_INTEGER || py[flatind_y] == NA_INTEGER,     \
           pout[flatind_out] = NA_INTEGER,                                                     \
-          pout[flatind_out] = (~px[flatind_x]) & (~py[flatind_y])         \
+          pout[flatind_out] = ~ (px[flatind_x] | py[flatind_y])         \
         ) \
       );                                                                \
       break;	\
@@ -1604,7 +1671,7 @@
         MACRO_ACTION2(                                                    \
           px[flatind_x] == NA_INTEGER || py[flatind_y] == NA_INTEGER,     \
           pout[flatind_out] = NA_INTEGER,                                                     \
-          pout[flatind_out] = (px[flatind_x] & py[flatind_y]) | (~px[flatind_x] & ~py[flatind_y]) \
+          pout[flatind_out] = ~(px[flatind_x] ^ py[flatind_y]) \
         ) \
       );                                                                \
       break;  \
@@ -1648,7 +1715,7 @@
         MACRO_ACTION2(                                                    \
           px[flatind_x] == NA_INTEGER || py[flatind_y] == NA_INTEGER,     \
           pout[flatind_out] = NA_INTEGER,                                                     \
-          pout[flatind_out] = rcpp_bit_se_int(px[flatind_x], py[flatind_y]) \
+          pout[flatind_out] = (~px[flatind_x] | py[flatind_y]) \
         ) \
       );                                                                \
       break;  \
@@ -1659,7 +1726,7 @@
         MACRO_ACTION2(                                                    \
           px[flatind_x] == NA_INTEGER || py[flatind_y] == NA_INTEGER,     \
           pout[flatind_out] = NA_INTEGER,                                                     \
-          pout[flatind_out] = rcpp_bit_ge_int(px[flatind_x], py[flatind_y]) \
+          pout[flatind_out] = (px[flatind_x] | ~py[flatind_y]) \
         ) \
       );                                                                \
       break;  \
@@ -1677,7 +1744,7 @@
     case 1:	\
     {	\
       DIMCODE(  \
-        pout[flatind_out] = (px[flatind_x] & py[flatind_y]) | (~px[flatind_x] & ~py[flatind_y]) \
+        pout[flatind_out] = ~(px[flatind_x] ^ py[flatind_y]) \
       );                                                                \
       break;	\
     }	\
@@ -1705,14 +1772,14 @@
     case 5:	\
     {	\
       DIMCODE(  \
-        pout[flatind_out] = rcpp_bit_se_raw(px[flatind_x], py[flatind_y]) \
+        pout[flatind_out] = (~px[flatind_x] | py[flatind_y]) \
       );                                                                \
       break;	\
     }	\
     case 6:	\
     {	\
       DIMCODE(  \
-        pout[flatind_out] = rcpp_bit_ge_raw(px[flatind_x], py[flatind_y]) \
+        pout[flatind_out] = (px[flatind_x] | ~py[flatind_y]) \
       );                                                                \
       break;	\
     }	\
@@ -2059,38 +2126,20 @@
 // In the context of a broadcasted operation involving exactly 2 arrays,
 // 'broadcast' uses different techniques for looping through the elements for broadcasting.
 // The techniques are the following, ordered from high to low priority:
-//  1) broadcasting where one of the arrays is a vector
-//  2) regular broadcasting
+//  1) Vector mode:
+//   This mode is usedbroadcasting where one or both of the arrays is actually vector or 1d-array.
+//   This mode is also used when no broadcasting needs to occur.
+//  2) General mode:
+//   For regular broadcasting.
 // 
-// The dimensions of both arrays are first NORMALIZED and SIMPLIFIED (see 'R' code),
+// The dimensions of both arrays are first NORMALIZED and SIMPLIFIED virtually
+// (see 'rcpp_virt_binary_prep' code),
 // before determining which technique to use.
 // 
-// 'vector broadcasting' occurs when at least one of the following is true:
-//  - x and/or y is a scalar (i.e. length of 1)
-//  - x and y are vectors or 1d array (i.e. ndims() <= 1L)
-//  - x and y have the exact same dimensions
-// 
-// When vector broadcasting does not hold,
-// 'ortho-vector broadcasting' occurs when the following is true:
-//  - x is a row-vector and y is a column-vector, or vice-versa
-// 
-// When both vector and orth-vector broadcasting does not hold,
-// 'big-to-vector' broadcasting occurs when ALL of the following is true
-// (again, AFTER normalization and simplification):
-//  - the arrays have 2 or 3 dimensions
-//  - x is a vector or y is a vector (i.e. only one dimension has size > 1)
-//  - all(dim(x) > dim(y)) || all(dim(y) > dim(x))
-//  - if the larger array is a 3d array, the smaller array had dimension in the form c(1, n, 1)
-// 
-// When none of the above techniques hold, The regular broadcasting technique is used.
 // The MACROs for regular broadcasting were written for 4 and 16 dimensions.
 // These MACROs were written via a simple 'R' script,
 // to minimize the risk of human error.
 // 
-// For broadcasting dimmodes 'big-to-vector' and 'regular'
-// the dimensions of the involved arrays are internally chunkified,
-// to ensure they fit the MACROs.
-// This has some overhead, but not too much.
 // 
 // 
 // ********************************************************************************
@@ -2197,9 +2246,9 @@
     R_xlen_t flatind_out = 0; \
     const int *pydim = INTEGER_RO(y_dim); \
     const R_xlen_t stride_y = (double)pydim[0] * (double)pydim[1];  \
-    const int N1 = INTEGER_RO(out_dim)[0];  \
+    const R_xlen_t N1 = INTEGER_RO(out_dim)[0];  \
     const int N2 = INTEGER_RO(out_dim)[1];  \
-    const R_xlen_t N3 = INTEGER_RO(out_dim)[2] * stride_y;  \
+    const R_xlen_t N3 = (R_xlen_t)INTEGER_RO(out_dim)[2] * stride_y;  \
     R_xlen_t flatind_y;\
     for(R_xlen_t iter3 = 0; iter3 < N3; iter3 += stride_y) {  \
       for(int flatind_x = 0; flatind_x < N2; ++flatind_x) { \
@@ -2215,7 +2264,7 @@
     R_xlen_t flatind_out = 0; \
     const int *pxdim = INTEGER_RO(x_dim); \
     const R_xlen_t stride_x = (double)pxdim[0] * (double)pxdim[1];  \
-    const int N1 = INTEGER_RO(out_dim)[0];  \
+    const R_xlen_t N1 = INTEGER_RO(out_dim)[0];  \
     const int N2 = INTEGER_RO(out_dim)[1];  \
     const R_xlen_t N3 = INTEGER_RO(out_dim)[2] * stride_x;  \
     R_xlen_t flatind_x;\

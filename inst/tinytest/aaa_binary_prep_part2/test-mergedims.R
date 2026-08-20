@@ -6,7 +6,20 @@ errorfun <- function(tt) {
   if(isFALSE(tt)) stop(print(tt))
 }
 
-mergedims <- broadcast:::.rcpp_mergedims
+mergedims <- function(x.dim, y.dim) {
+  ndim <- broadcast:::.rcpp_max_ndim(length(x.dim), length(y.dim))
+  x.dim2 <- broadcast:::.rcpp_virt_alloc_dim(x.dim, ndim)
+  y.dim2 <- broadcast:::.rcpp_virt_alloc_dim(y.dim, ndim)
+  x.ndim <- ndim(x.dim)
+  y.ndim <- ndim(y.dim)
+  
+  broadcast:::.rcpp_mergedims_set(x.dim2, y.dim2, x.ndim, y.ndim)
+  out <- list(
+    x.dim2[seq_len(x.ndim)],
+    y.dim2[seq_len(y.ndim)]
+  )
+  return(out)
+}
 
 
 # check full orthogonals are never merged ====
@@ -69,3 +82,4 @@ expect_equal(
 )
 
 enumerate <- enumerate + 1L
+
