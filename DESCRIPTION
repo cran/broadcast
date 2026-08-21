@@ -1,6 +1,6 @@
 Package: broadcast
 Title: Broadcasted Array Operations Like 'NumPy'
-Version: 0.1.9.5
+Version: 0.1.9.6
 Authors@R: person("Tony", "Wilkes", role = c("aut", "cre", "cph"),
                   email = "tonywilkes.nl@gmail.com",
                   comment = c(ORCID = "0000-0001-9498-8379"))
@@ -35,9 +35,9 @@ BugReports: https://github.com/tony-aw/broadcast/issues/
 Language: en-gb
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: yes
-Packaged: 2026-08-19 17:52:38 UTC; Tony
+Packaged: 2026-08-20 12:39:49 UTC; Tony
 Author: Tony Wilkes [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-9498-8379>)
 Maintainer: Tony Wilkes <tonywilkes.nl@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-08-20 08:42:11 UTC
+Date/Publication: 2026-08-21 08:50:20 UTC
